@@ -40,7 +40,7 @@ class Board(object):
         for i in range(self.width):
             yield self.col(i)
 
-    def at(self, x, y):
+    def get(self, x, y):
         '''
         Gets the play at the coordinate.
 
@@ -61,9 +61,11 @@ class Board(object):
         '''
         rows = []
         for row in self.rows:
-            line = [ str(i).rjust(3) for i in row ]
-            line = ''.join(line)
-            line = line.replace('0', '.')
+            line = ''.join( str(i) for i in row )
+            line = line.replace('-1', 'O ')
+            line = line.replace('0', '- ')
+            line = line.replace('1', 'X ')
+            line = line.strip()
             rows.append(line)
         return '\n'.join(rows[::-1])
 
