@@ -51,28 +51,25 @@ class TestBoard(TestCase):
         self.assertListEqual(res, col)
 
 
-    def test_at(self):
+    def test_get(self):
         coords = [ (0, 0), (0, 3), (0, 1), (3, 3) ]
         results = [ 0, 1, 1, 1 ]
 
         for coord, res in zip(coords, results):
-            at = self.board.at(*coord)
+            at = self.board.get(*coord)
             self.assertEqual(at, res)
 
     def test_set(self):
         self.board.set(1, 1, -1)
-        res = self.board.at(1, 1)
+        res = self.board.get(1, 1)
         self.assertEqual(res, -1)
 
     def test_str(self):
-        string = ('  1  .  1  .  1\n'
-                  '  1  1  1  1 -1\n'
-                  '  .  .  .  .  .\n'
-                  '  1  1  1  1  .\n'
-                  '  .  .  .  .  1')
+        string = ('X - X - X\n'
+                  'X X X X O\n'
+                  '- - - - -\n'
+                  'X X X X -\n'
+                  '- - - - X')
         res = str(self.board)
-        print(string)
-        print('='*8)
-        print(res)
         self.assertEqual(string, res)
 
