@@ -1,6 +1,21 @@
 
 
 class Heuristic(object):
+
+    LINE_TABLE = {
+        0: 0,
+        1: 3**1,
+        2: 3**2,
+        3: 3**3,
+        4: 3**4,
+        5: 3**14,
+        -5: -(3**14),
+        -4: -(3**4),
+        -3: -(3**3),
+        -2: -(3**2),
+        -1: -(3**1),
+    }
+
     def __init__(self, board):
         super(Heuristic, self).__init__()
         self.board = board
@@ -20,19 +35,14 @@ class Heuristic(object):
             True if it is open, False otherwise.
         '''
         zeroes = line.count(0)
+        if zeroes == 5:
+            return False
         total = abs(sum(line))
         return total == 5 - zeroes
 
-    def _check_line(self, line):
-        if not self._is_open(line):
-            return 0
-
-        summ = sum(line)
-        res = 3 ** abs(summ)
-        if summ >= 0:
-            return res
-        else:
-            return -res
+    def _line_value(self, line):
+        s = sum(line)
+        return Heuristic.LINE_TABLE[s]
 
     def value(self):
         pass
