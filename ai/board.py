@@ -40,6 +40,52 @@ class Board(object):
         for i in range(self.width):
             yield self.col(i)
 
+    def ldiag(self, i):
+        '''
+        Returns the i-th left diagonal.
+
+        Adapted from:
+            https://stackoverflow.com/a/23069625/5092038
+
+        A left diagonal is one that starts in the top-left and goes
+        right-bottom. Note that the index count starts on the top-left.
+        '''
+        h = self.height
+        w = self.width
+        mx = max(i - h + 1, 0)
+        mn = min(i + 1, w)
+        return [ self.board[(i - q) * w + q] for q in range(mx, mn) ]
+
+    def rdiag(self, i):
+        '''
+        Returns the i-th left diagonal.
+
+        Adapted from:
+            https://stackoverflow.com/a/23069625/5092038
+
+        A right diagonal is one that starts in the top-right and goes
+        left-bottom. Note that the index starts on the bottom-left.
+        '''
+        h = self.height
+        w = self.width
+        mx = max(i - h + 1, 0)
+        mn = min(i + 1, w)
+        board = [ self.board[(h - i + q - 1) * w + q] for q in range(mx, mn) ]
+        return board[::-1]
+
+    @property
+    def diags(self):
+        '''
+        Simple iterator for all the diagonals.
+
+        It starts with the right diagonals first and goes to the left ones.
+        '''
+        total = self.height + self.width - 1
+        for i in range(total):
+            yield self.rdiag(i)
+        for i in range(total):
+            yield self.ldiag(i)
+
     def get(self, x, y):
         '''
         Gets the play at the coordinate.
@@ -50,6 +96,9 @@ class Board(object):
         return self.board[y * self.width + x]
 
     def set(self, x, y, val):
+        '''
+        Set the val in the coordinate.
+        '''
         self.board[y * self.width + x] = val
 
     def __str__(self):

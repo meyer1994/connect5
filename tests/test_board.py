@@ -13,6 +13,11 @@ class TestBoard(TestCase):
             1, 1, 1, 1, -1,
             1, 0, 1, 0,  1
         ]
+        # X - X - X
+        # X X X X O
+        # - - - - -
+        # X X X X -
+        # - - - - X
 
     def test_constructor(self):
         self.assertEqual(self.board.width, 5)
@@ -50,6 +55,62 @@ class TestBoard(TestCase):
         col = [ 0, 1, 0, 1, 0 ]
         self.assertListEqual(res, col)
 
+    def test_rdiag(self):
+        expected = [
+            [ 1 ],
+            [ 0, 1 ],
+            [ 1, 1, 0 ],
+            [ 0, 1, 0, 1 ],
+            [ 1, 1, 0, 1, 0 ],
+            [ -1, 0, 1, 0 ],
+            [ 0, 1, 0 ],
+            [ 0, 0 ],
+            [ 1 ]
+        ]
+        for i, exp in enumerate(expected):
+            res = self.board.rdiag(i)
+            self.assertListEqual(res, exp)
+
+    def test_ldiag(self):
+        expected = [
+            [ 0 ],
+            [ 1, 0 ],
+            [ 0, 1, 0 ],
+            [ 1, 0, 1, 0 ],
+            [ 1, 1, 0, 1, 1 ],
+            [ 0, 1, 0, 0 ],
+            [ 1, 1, 0 ],
+            [ 0, -1 ],
+            [ 1 ]
+        ]
+        for i, exp in enumerate(expected):
+            res = self.board.ldiag(i)
+            self.assertListEqual(res, exp)
+
+    def test_diags(self):
+        expected = [
+            [ 1 ],
+            [ 0, 1 ],
+            [ 1, 1, 0 ],
+            [ 0, 1, 0, 1 ],
+            [ 1, 1, 0, 1, 0 ],
+            [ -1, 0, 1, 0 ],
+            [ 0, 1, 0 ],
+            [ 0, 0 ],
+            [ 1 ],
+            [ 0 ],
+            [ 1, 0 ],
+            [ 0, 1, 0 ],
+            [ 1, 0, 1, 0 ],
+            [ 1, 1, 0, 1, 1 ],
+            [ 0, 1, 0, 0 ],
+            [ 1, 1, 0 ],
+            [ 0, -1 ],
+            [ 1 ]
+        ]
+        diags = self.board.diags
+        for res, exp in zip(diags, expected):
+            self.assertListEqual(res, exp)
 
     def test_get(self):
         coords = [ (0, 0), (0, 3), (0, 1), (3, 3) ]
