@@ -19,7 +19,6 @@ class TestHeuristic(TestCase):
         # - O - - -
         # - - X - -
         self.heuristic = Heuristic(board)
-        self.board = board
 
     def test_is_open(self):
         inpt = [ 0, 0, 1, -1, 0 ]
@@ -40,7 +39,18 @@ class TestHeuristic(TestCase):
 
     def test_check_line(self):
         expected = [ 3, -3, 3**14, 0, 0 ]
-        rows = self.board.rows
+        rows = self.heuristic.board.rows
         for exp, row in zip(expected, rows):
             res = self.heuristic._line_value(row)
             self.assertEqual(exp, res)
+
+    def test_value(self):
+        # rows
+        expected = 3**14
+        # cols
+        expected += 3 + 3**2 + 3**2
+        # diagonals
+        expected += 3
+
+        result = self.heuristic.value()
+        self.assertEqual(expected, result)
