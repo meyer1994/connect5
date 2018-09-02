@@ -17,8 +17,9 @@ install:
 
 # command to run tests
 script:
-  - coverage run -m unittest -vb tests
+  - coverage run -m unittest discover -vb tests
 
 after_sucess:
   - coverage report -m
-  - pip install codecov && codecov
+  - pip install codecov
+  - codecov
