@@ -45,4 +45,30 @@ class Heuristic(object):
         return Heuristic.LINE_TABLE[s]
 
     def value(self):
-        pass
+        '''
+        Calculates heuristic value.
+
+        Iterates over the rows, cols, and diagonals. In the respective order.
+
+        Returns:
+            The heuristic value.
+        '''
+        for row in self.board.rows:
+            for i in range(len(row) - 4):
+                line = row[i:i+5]
+                if self._is_open(line):
+                    self.sum += self._line_value(line)
+
+        for col in self.board.cols:
+            for i in range(len(col) - 4):
+                line = col[i:i+5]
+                if self._is_open(line):
+                    self.sum += self._line_value(line)
+
+        for diag in self.board.diags:
+            for i in range(len(diag) - 4):
+                line = diag[i:i+5]
+                if self._is_open(line):
+                    self.sum += self._line_value(line)
+
+        return self.sum
