@@ -121,30 +121,6 @@ class TestBoard(TestCase):
         res = self.board.get(1, 1)
         self.assertEqual(res, -1)
 
-    def test_next(self):
-        result = self.board.next(0, 0, -1)
-        self.board.set(0, 0, -1)
-        self.assertEqual(result, self.board)
-
-    def test_moves(self):
-        expected = [
-            (0, 0),
-            (1, 0),
-            (2, 0),
-            (3, 0),
-            (4, 1),
-            (0, 2),
-            (1, 2),
-            (2, 2),
-            (3, 2),
-            (4, 2),
-            (1, 4),
-            (3, 4)
-        ]
-        result = self.board.moves
-        for res, exp in zip(result, expected):
-            self.assertEqual(res, exp)
-
     def test_str(self):
         string = ('X - X - X\n'
                   'X X X X O\n'

@@ -48,7 +48,9 @@ def evaluate(board):
     Returns:
         The heuristic value.
     '''
+    plays = 0
     result = 0
+
     for row in board.rows:
         for i in range(len(row) - 4):
             line = row[i:i+5]
@@ -62,6 +64,10 @@ def evaluate(board):
                 result += evaluate_line(line)
 
     for diag in board.diags:
+
+        if len(diag) < 5:
+            continue
+
         for i in range(len(diag) - 4):
             line = diag[i:i+5]
             if is_open(line):
