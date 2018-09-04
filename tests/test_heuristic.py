@@ -52,5 +52,8 @@ class TestHeuristic(TestCase):
         # diagonals
         expected += 3
 
+        # plays
+        expected /= 9
+
         result = evaluate(self.board)
         self.assertEqual(expected, result)
