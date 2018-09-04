@@ -2,16 +2,18 @@ from unittest import TestCase
 
 from ai.board import Board
 from ai.minimax import minimax
+from ai.gamestate import GameState
 
 class TestMiniMax(TestCase):
 
     def setUp(self):
         board = Board(15, 15)
-        board.set(5, 0, 1)
-        board.set(6, 0, 1)
-        board.set(7, 0, 1)
-        board.set(8, 0, 1)
-        self.board = board
+        board.set(5, 0, -1)
+        board.set(6, 0, -1)
+        board.set(7, 0, -1)
+        board.set(8, 0, -1)
+        board.set(9, 0, 1)
+        self.game = GameState(board, False)
         # - - - - - - - - - - - - - - -
         # - - - - - - - - - - - - - - -
         # - - - - - - - - - - - - - - -
@@ -26,9 +28,9 @@ class TestMiniMax(TestCase):
         # - - - - - - - - - - - - - - -
         # - - - - - - - - - - - - - - -
         # - - - - - - - - - - - - - - -
-        # - - - - - X X X X - - - - - -
+        # - - - - - O O O O X - - - - -
 
     def test_minimax(self):
-        expected = { (4, 0), (9, 0) }
-        result = minimax(self.board, 1)
-        self.assertIn(result, expected)
+        expected = (4, 0)
+        result = minimax(self.game, 1)
+        self.assertEqual(result, expected)
