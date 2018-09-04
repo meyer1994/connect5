@@ -45,10 +45,39 @@ class TestGameState(TestCase):
         for res, exp in zip(result, expected):
             self.assertEqual(res, exp)
 
+    def test_is_winner(self):
+        line = self.game.board.row(1)
+        result = self.game._is_winner(line)
+        self.assertFalse(result)
+
+        # make it a winning line
+        line[-1] = 1
+        result = self.game._is_winner(line)
+        self.assertTrue(result)
+
     def test_is_over(self):
         result = self.game._is_over(3, 1)
         self.assertFalse(result)
 
-        self.game.board.set(4, 1, 1)
-        result = self.game._is_over(4, 1)
+        # Test cols
+        copy = self.game.next(4, 1, 1)
+        result = copy._is_over(4, 1)
+        self.assertTrue(result)
+
+        # Test rows
+        copy = self.game.next(0, 0, 1)
+        copy.board.set(0, 2, 1)
+        result = copy._is_over(0, 0)
+        self.assertTrue(result)
+
+        # Test rdiag
+        copy = self.game.next(2, 2, 1)
+        result = copy._is_over(2, 2)
+        self.assertTrue(result)
+
+        # Test ldiag
+        copy = self.game.next(2, 2, 1)
+        copy.board.set(0, 0, 1)
+        copy.board.set(0, 4, 0)
+        result = copy._is_over(2, 2)
         self.assertTrue(result)
