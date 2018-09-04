@@ -1,4 +1,4 @@
-
+import itertools
 
 VALUE_TABLE = {
     0: 0,
@@ -48,29 +48,20 @@ def evaluate(board):
     Returns:
         The heuristic value.
     '''
-    plays = 0
     result = 0
+    plays = len(board) - board.board.count(0)
 
-    for row in board.rows:
-        for i in range(len(row) - 4):
-            line = row[i:i+5]
-            if is_open(line):
-                result += evaluate_line(line)
+    # copied from:
+    #   https://stackoverflow.com/a/571928/5092038
+    iterators = [ board.rows, board.cols, board.diags ]
+    for line in itertools.chain(*iterators):
 
-    for col in board.cols:
-        for i in range(len(col) - 4):
-            line = col[i:i+5]
-            if is_open(line):
-                result += evaluate_line(line)
-
-    for diag in board.diags:
-
-        if len(diag) < 5:
+        if len(line) < 5:
             continue
 
-        for i in range(len(diag) - 4):
-            line = diag[i:i+5]
+        for i in range(len(line) - 4):
+            line = line[i:i+5]
             if is_open(line):
                 result += evaluate_line(line)
 
-    return result
+    return result / plays
