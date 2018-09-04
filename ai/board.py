@@ -101,19 +101,6 @@ class Board(object):
         '''
         self.board[y * self.width + x] = val
 
-    def next(self, x, y, val):
-        copy = deepcopy(self)
-        copy.set(x, y, val)
-        return copy
-
-    @property
-    def moves(self):
-        for i, v in enumerate(self.board):
-            if v == 0:
-                x = i % self.width
-                y = i // self.width
-                yield (x, y)
-
     def __str__(self):
         '''
         Returns string representation of board.
@@ -136,3 +123,6 @@ class Board(object):
 
     def __eq__(self, b):
         return self.board == b.board
+
+    def __getitem__(self, i):
+        return self.board.__getitem__(i)
