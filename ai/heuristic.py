@@ -60,8 +60,8 @@ def evaluate(board):
             continue
 
         for i in range(len(line) - 4):
-            line = line[i:i+5]
-            if is_open(line):
-                result += evaluate_line(line)
+            sub_line = line[i:i+5]
+            if is_open(sub_line):
+                result += evaluate_line(sub_line)
 
     return result / plays
