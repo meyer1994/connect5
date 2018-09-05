@@ -46,6 +46,9 @@ class GameState(object):
         if len(rdiag) >= 5 and self._is_winner(rdiag):
             return True
 
+        if self.board.board.count(0) == 0:
+            return True
+
         return False
 
     def _is_winner(self, line):
