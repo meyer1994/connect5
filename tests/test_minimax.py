@@ -22,10 +22,6 @@ class TestMiniMax(TestCase):
         # - O O O O X
 
     def test_minimax(self):
-        expected = (4, 0)
-        result = minimax(self.game, 1)
-        self.assertTupleEqual(result, expected)
-
-        expected = (4, 0)
-        result = minimax(self.game, -1)
+        expected = (0, 0)
+        result = minimax(self.game)
         self.assertTupleEqual(result, expected)
