@@ -2,28 +2,43 @@ from math import inf as INFINITY
 
 from ai.heuristic import evaluate
 
-MAX_DEPTH = 50
+MAX_DEPTH = 10
 depth = -1
 
-def min_play(game):
+def min_play(game, alpha, beta):
     global depth, MAX_DEPTH
     depth += 1
     if depth >= MAX_DEPTH or game.over:
         return evaluate(game.board)
 
-    games = ( game.next(x, y, -1) for x, y in game.moves )
-    scores = map(max_play, games)
-    return min(scores)
+    best = INFINITY
 
-def max_play(game):
+    for x, y in game.moves:
+        copy = game.next(x, y, -1)
+        max_value = max_play(copy, alpha, beta)
+        best = min(best, max_value)
+        if best <= alpha:
+            return best
+        beta = min(beta, best)
+    return best
+
+
+def max_play(game, alpha, beta):
     global depth, MAX_DEPTH
     depth += 1
     if depth >= MAX_DEPTH or game.over:
         return evaluate(game.board)
 
-    games = ( game.next(x, y, 1) for x, y in game.moves )
-    scores = map(min_play, games)
-    return max(scores)
+    best = -INFINITY
+
+    for x, y in game.moves:
+        copy = game.next(x, y, 1)
+        min_value = min_play(copy, alpha, beta)
+        best = max(best, min_value)
+        if best >= beta:
+            return best
+        alpha = max(alpha, best)
+    return best
 
 
 def minimax(game):
@@ -34,7 +49,7 @@ def minimax(game):
     for x, y in game.moves:
         depth = -1
         copy = game.next(x, y, 1)
-        score = min_play(copy)
+        score = min_play(copy, best_score, INFINITY)
         if score > best_score:
             best_move = (x, y)
             best_score = score
