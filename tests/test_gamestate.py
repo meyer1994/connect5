@@ -122,3 +122,8 @@ class TestGameState(TestCase):
         expected = 26
         result = copy.plays
         self.assertEqual(expected, result)
+
+    def test_str(self):
+        expected = str(self.game.board)
+        result = str(self.game)
+        self.assertEqual(expected, result)
