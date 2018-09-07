@@ -31,4 +31,10 @@ class TestMiniMax(TestCase):
         #   0 1 2 3 4 5 6 7
 
     def test_minimax(self):
-        pass
+        expected = {
+            (6, 5),
+            (6, 6),
+            (6, 7)
+        }
+        result = minimax(self.game)
+        self.assertIn(result, expected)
