@@ -12,7 +12,7 @@ class GameState(object):
         '''
         copy = deepcopy(self)
         copy.board.set(x, y, val)
-        copy.over = copy._is_over(x, y)
+        copy.over = copy.over or copy._is_over(x, y)
         return copy
 
     def _is_over(self, x, y):
