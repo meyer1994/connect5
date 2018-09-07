@@ -19,17 +19,17 @@ class GameState(object):
 
         copy = deepcopy(self)
         copy.board.set(x, y, val)
-        copy.over = copy.over or copy._is_over(x, y)
+        copy.over = copy._is_over(x, y)
         return copy
 
     def _is_over(self, x, y):
         '''
-        Checks if the inputted piece won the game.
+        Checks if the inputted piece finished the game.
 
         It is called every time a piece is placed in the board.
 
         Returns:
-            True if the piece won the game. False otherwise.
+            True if the piece finished the game. False otherwise.
         '''
         # this values are checked for the board borders
         max_x = min(x + 5, self.board.width)
