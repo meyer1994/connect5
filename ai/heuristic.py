@@ -1,18 +1,17 @@
-import itertools
+from itertools import product, chain
+from collections import defaultdict
 
-VALUE_TABLE = {
-    0: 0,
-    1: 3**1,
-    2: 3**2,
-    3: 3**3,
-    4: 3**4,
-    5: 3**14,
-    -5: -(3**14),
-    -4: -(3**4),
-    -3: -(3**3),
-    -2: -(3**2),
-    -1: -(3**1),
-}
+ONLY_X = { ''.join(k): 3**k.count('X') for k in product('X-', repeat=5) }
+ONLY_X['XXXXX'] = 3**14
+
+ONLY_O = { ''.join(k): -3**k.count('O') for k in product('O-', repeat=5) }
+ONLY_O['OOOOO'] = -3**14
+
+VALUE_TABLE = defaultdict(lambda: 0)
+VALUE_TABLE.update(ONLY_X)
+VALUE_TABLE.update(ONLY_O)
+VALUE_TABLE['-----'] = 0
+
 
 def is_open(line):
     '''
@@ -27,19 +26,19 @@ def is_open(line):
     Returns:
         True if it is open, False otherwise.
     '''
-    zeroes = line.count(0)
-    if zeroes == 5:
+    global ONLY_O, ONLY_X
+
+    if line == '-----':
         return False
-    total = abs(sum(line))
-    return total == 5 - zeroes
+    return line in ONLY_O or line in ONLY_X
 
 
 def evaluate_line(line):
-    s = sum(line)
-    return VALUE_TABLE[s]
+    global VALUE_TABLE
+    return VALUE_TABLE[line]
 
 
-def evaluate(board):
+def evaluate(game):
     '''
     Calculates heuristic value.
 
@@ -49,17 +48,17 @@ def evaluate(board):
         The heuristic value.
     '''
     result = 0
-    plays = len(board) - board.board.count(0)
+    plays = game.plays
 
-    # copied from:
+    # adapted from:
     #   https://stackoverflow.com/a/571928/5092038
-    iterators = [ board.rows, board.cols, board.diags ]
-    for line in itertools.chain(*iterators):
-
-        if len(line) < 5:
-            continue
-
-        for i in range(len(line) - 4):
+    iterators = [ game.board.rows, game.board.cols, game.board.diags ]
+    combined = chain(*iterators)
+    filtered = filter(lambda i: len(i) >= 5, combined)
+    for line in filtered:
+        # number of len 5 lines in current line
+        l = len(line) - 4
+        for i in range(l):
             sub_line = line[i:i+5]
             if is_open(sub_line):
                 result += evaluate_line(sub_line)
