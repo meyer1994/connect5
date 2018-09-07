@@ -2,7 +2,7 @@ from math import inf as INFINITY
 
 from ai.heuristic import evaluate
 
-MAX_DEPTH = 2
+MAX_DEPTH = 7
 
 def min_play(game, alpha, beta, depth):
     global MAX_DEPTH
