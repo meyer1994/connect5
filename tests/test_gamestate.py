@@ -8,17 +8,17 @@ class TestGameState(TestCase):
 
     def setUp(self):
         board = Board(8, 9)
-        board.board = [
-            0, -1,  0,  0,  0,  0,  0, 0,
-            0,  0,  1, -1,  0,  0,  0, 0,
-            0,  0, -1,  1, -1,  0,  0, 0,
-            1, -1, -1,  1,  1,  1, -1, 0,
-            0, -1,  1,  1,  1, -1,  0, 0,
-            0,  0, -1,  1,  1,  1,  0, 0,
-            0,  0, -1, -1, -1,  1,  0, 0,
-            0,  0,  0,  0,  0,  0,  0, 0,
-            0,  0,  0,  0,  0,  0,  0, 0,
-        ]
+        board.board = ''.join([
+            '-O------',
+            '--XO----',
+            '--OXO---',
+            'XOOXXXO-',
+            '-OXXXO--',
+            '--OXXX--',
+            '--OOOX--',
+            '--------',
+            '--------',
+        ])
         self.game = GameState(board, False)
         # 8 - - - - - - - -
         # 7 - - - - - - - -
@@ -32,8 +32,8 @@ class TestGameState(TestCase):
         #   0 1 2 3 4 5 6 7
 
     def test_next(self):
-        result = self.game.next(0, 0, -1)
-        self.game.board.set(0, 0, -1)
+        result = self.game.next(0, 0, 'O')
+        self.game.board.set(0, 0, 'O')
         self.assertEqual(result, self.game)
 
     def test_moves(self):
@@ -62,40 +62,40 @@ class TestGameState(TestCase):
             self.assertFalse(res)
 
         # make a winning line
-        self.game.board.set(6, 5, 1)
-        self.game.board.set(7, 5, 1)
+        self.game.board.set(6, 5, 'x')
+        self.game.board.set(7, 5, 'x')
         line = self.game.board.row(5)
         result = self.game._is_winner(line)
         self.assertTrue(result)
 
     def test_is_over(self):
         # Test cols
-        copy = self.game.next(3, 6, 1)
+        copy = self.game.next(3, 6, 'x')
         self.assertTrue(copy.over)
 
         # Test rows
-        copy = self.game.next(6, 5, 1)
+        copy = self.game.next(6, 5, 'x')
         self.assertFalse(copy.over)
-        copy = copy.next(7, 5, 1)
+        copy = copy.next(7, 5, 'x')
         self.assertTrue(copy.over)
 
         # Test rdiag
-        copy = self.game.next(0, 4, -1)
+        copy = self.game.next(0, 4, 'o')
         self.assertFalse(copy.over)
-        copy = copy.next(4, 0, -1)
+        copy = copy.next(4, 0, 'o')
         self.assertTrue(copy.over)
 
         # Test ldiag
-        copy = self.game.next(6, 7, 1)
+        copy = self.game.next(6, 7, 'x')
         self.assertFalse(copy.over)
-        copy = copy.next(7, 8, 1)
+        copy = copy.next(7, 8, 'x')
         self.assertTrue(copy.over)
 
     def test_full_board_is_over(self):
         board = Board(4, 4)
         game = GameState(board, False)
         for x, y in game.moves:
-            game = game.next(x, y, 1)
+            game = game.next(x, y, 'x')
         self.assertTrue(game.over)
         self.assertEqual(game.plays, 16)
 
@@ -106,19 +106,19 @@ class TestGameState(TestCase):
         self.assertEqual(expected, result)
 
         # add piece
-        copy = self.game.next(0, 0, 1)
+        copy = self.game.next(0, 0, 'x')
         expected = 27
         result = copy.plays
         self.assertEqual(expected, result)
 
         # add piece on top of another
-        copy = copy.next(0, 0, -1)
+        copy = copy.next(0, 0, 'o')
         expected = 27
         result = copy.plays
         self.assertEqual(expected, result)
 
         # remove piece
-        copy = copy.next(0, 0, 0)
+        copy = copy.next(0, 0, '-')
         expected = 26
         result = copy.plays
         self.assertEqual(expected, result)
