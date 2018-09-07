@@ -90,3 +90,35 @@ class TestGameState(TestCase):
         self.assertFalse(copy.over)
         copy = copy.next(7, 8, 1)
         self.assertTrue(copy.over)
+
+    def test_full_board_is_over(self):
+        board = Board(4, 4)
+        game = GameState(board, False)
+        for x, y in game.moves:
+            game = game.next(x, y, 1)
+        self.assertTrue(game.over)
+        self.assertEqual(game.plays, 16)
+
+    def test_plays(self):
+        # original
+        expected = 26
+        result = self.game.plays
+        self.assertEqual(expected, result)
+
+        # add piece
+        copy = self.game.next(0, 0, 1)
+        expected = 27
+        result = copy.plays
+        self.assertEqual(expected, result)
+
+        # add piece on top of another
+        copy = copy.next(0, 0, -1)
+        expected = 27
+        result = copy.plays
+        self.assertEqual(expected, result)
+
+        # remove piece
+        copy = copy.next(0, 0, 0)
+        expected = 26
+        result = copy.plays
+        self.assertEqual(expected, result)

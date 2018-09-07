@@ -5,11 +5,18 @@ class GameState(object):
         super(GameState, self).__init__()
         self.board = board
         self.over = over
+        self.plays = len(self.board) - self.board.board.count(0)
 
     def next(self, x, y, val):
         '''
         Creates a copy of the state, apply the play to this copy and returns it.
         '''
+        place = self.board.get(x, y)
+        if place == 0 and val != 0:
+            self.plays += 1
+        if place != 0 and val == 0:
+            self.plays -= 1
+
         copy = deepcopy(self)
         copy.board.set(x, y, val)
         copy.over = copy.over or copy._is_over(x, y)
@@ -30,6 +37,9 @@ class GameState(object):
         max_y = min(y + 5, self.board.height)
         min_y = max(y - 5, 0)
 
+        if self.plays == len(self.board):
+            return True
+
         row = self.board.row(y)[min_x:max_x]
         if self._is_winner(row):
             return True
@@ -44,9 +54,6 @@ class GameState(object):
 
         rdiag = self.board.rdiag(x + self.board.height - 1 - y)
         if len(rdiag) >= 5 and self._is_winner(rdiag):
-            return True
-
-        if self.board.board.count(0) == 0:
             return True
 
         return False
