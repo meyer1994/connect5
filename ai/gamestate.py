@@ -5,16 +5,16 @@ class GameState(object):
         super(GameState, self).__init__()
         self.board = board
         self.over = over
-        self.plays = len(self.board) - self.board.board.count(0)
+        self.plays = len(self.board) - self.board.board.count('-')
 
     def next(self, x, y, val):
         '''
         Creates a copy of the state, apply the play to this copy and returns it.
         '''
         place = self.board.get(x, y)
-        if place == 0 and val != 0:
+        if place == '-' and val != '-':
             self.plays += 1
-        if place != 0 and val == 0:
+        if place != '-' and val == '-':
             self.plays -= 1
 
         copy = deepcopy(self)
@@ -73,8 +73,7 @@ class GameState(object):
         lines = len(line) - 4
         for i in range(lines):
             sub_line = line[i:i+5]
-            line_sum = sum(sub_line)
-            if abs(line_sum) == 5:
+            if sub_line == 'X' * 5 or sub_line == 'O' * 5:
                 return True
         return False
 
@@ -87,10 +86,13 @@ class GameState(object):
         move.
         '''
         for i, v in enumerate(self.board):
-            if v == 0:
+            if v == '-':
                 x = i % self.board.width
                 y = i // self.board.width
                 yield (x, y)
 
     def __eq__(self, g):
-        return self.board == g.board and self.over == g.over
+        board = self.board == g.board
+        over = self.over == g.over
+        plays = self.plays == g.plays
+        return board and over and plays
