@@ -91,6 +91,9 @@ class GameState(object):
                 y = i // self.board.width
                 yield (x, y)
 
+    def __str__(self):
+        return str(self.board)
+
     def __eq__(self, g):
         board = self.board == g.board
         over = self.over == g.over
