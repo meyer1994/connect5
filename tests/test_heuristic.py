@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from ai.board import Board
 from ai.gamestate import GameState
-from ai.heuristic import evaluate, evaluate_line, is_open
+from ai.heuristic import evaluate, evaluate_line
 
 class TestHeuristic(TestCase):
     def setUp(self):
@@ -22,23 +22,6 @@ class TestHeuristic(TestCase):
         # X X X X X
         # - O - - -
         # - - X - -
-
-    def test_is_open(self):
-        inpt = '--XO-'
-        res = is_open(inpt)
-        self.assertFalse(res)
-
-        inpt = '-----'
-        res = is_open(inpt)
-        self.assertFalse(res)
-
-        inpt = '----X'
-        res = is_open(inpt)
-        self.assertTrue(res)
-
-        inpt = '--O--'
-        res = is_open(inpt)
-        self.assertTrue(res)
 
     def test_evaluate_line(self):
         expected = [ 3, -3, 3**14, 0, 0 ]
