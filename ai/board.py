@@ -3,13 +3,13 @@ from copy import deepcopy
 class Board(object):
     def __init__(self, width, height):
         super(Board, self).__init__()
+        self.board = '-' * (width * height)
         self.width = width
         self.height = height
-        self.board = [ 0 for _ in range(width * height) ]
 
     def row(self, i):
         '''
-        Gets row from of board.
+        Gets ith row from of board.
         '''
         start = i * self.width
         end = start + self.width
@@ -54,7 +54,8 @@ class Board(object):
         w = self.width
         mx = max(i - h + 1, 0)
         mn = min(i + 1, w)
-        return [ self.board[(i - q) * w + q] for q in range(mx, mn) ]
+        gen = ( self.board[(i - q) * w + q] for q in range(mx, mn) )
+        return ''.join(gen)
 
     def rdiag(self, i):
         '''
@@ -70,8 +71,8 @@ class Board(object):
         w = self.width
         mx = max(i - h + 1, 0)
         mn = min(i + 1, w)
-        board = [ self.board[(h - i + q - 1) * w + q] for q in range(mx, mn) ]
-        return board[::-1]
+        gen = ( self.board[(h - i + q - 1) * w + q] for q in range(mx, mn) )
+        return ''.join(gen)
 
     @property
     def diags(self):
@@ -99,7 +100,8 @@ class Board(object):
         '''
         Set the val in the coordinate.
         '''
-        self.board[y * self.width + x] = val
+        s = y * self.width + x
+        self.board = self.board[:s] + val.upper() + self.board[s + 1:]
 
     def __str__(self):
         '''
@@ -110,13 +112,13 @@ class Board(object):
         '''
         rows = []
         for row in self.rows:
-            line = ''.join( str(i) for i in row )
-            line = line.replace('-1', 'O ')
-            line = line.replace('0', '- ')
-            line = line.replace('1', 'X ')
+            line = ' '.join( str(i) for i in row )
             line = line.strip()
             rows.append(line)
         return '\n'.join(rows[::-1])
+
+    def __repr__(self):
+        return str(self)
 
     def __len__(self):
         return len(self.board)
