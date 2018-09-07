@@ -1,19 +1,22 @@
 from unittest import TestCase
 
 from ai.board import Board
+from ai.gamestate import GameState
 from ai.heuristic import evaluate, evaluate_line, is_open
 
 class TestHeuristic(TestCase):
-
     def setUp(self):
         board = Board(5, 5)
-        board.set(2, 0, 1)
-        board.set(1, 1, -1)
-        for i in range(5):
-            board.set(i, 2, 1)
-        board.set(3, 4, 1)
-        board.set(4, 4, -1)
-        self.board = board
+        board.set(2, 0, 'X')
+        board.set(1, 1, 'O')
+        board.set(0, 2, 'X')
+        board.set(1, 2, 'X')
+        board.set(2, 2, 'X')
+        board.set(3, 2, 'X')
+        board.set(4, 2, 'X')
+        board.set(3, 4, 'X')
+        board.set(4, 4, 'O')
+        self.game = GameState(board, False)
         # - - - X O
         # - - - - -
         # X X X X X
@@ -21,28 +24,26 @@ class TestHeuristic(TestCase):
         # - - X - -
 
     def test_is_open(self):
-        inpt = [ 0, 0, 1, -1, 0 ]
+        inpt = '--XO-'
         res = is_open(inpt)
         self.assertFalse(res)
 
-        inpt = [ 0, 0, 0, 0, 0 ]
+        inpt = '-----'
         res = is_open(inpt)
         self.assertFalse(res)
 
-        inpt = [ 0, 0, 0, 0, 1 ]
+        inpt = '----X'
         res = is_open(inpt)
         self.assertTrue(res)
 
-        inpt = [ 0, 0, -1, 0, 0 ]
+        inpt = '--O--'
         res = is_open(inpt)
         self.assertTrue(res)
 
     def test_evaluate_line(self):
         expected = [ 3, -3, 3**14, 0, 0 ]
-        rows = self.board.rows
-        for exp, row in zip(expected, rows):
-            res = evaluate_line(row)
-            self.assertEqual(exp, res)
+        result = [ evaluate_line(l) for l in self.game.board.rows ]
+        self.assertListEqual(expected, result)
 
     def test_evaluate(self):
         # rows
@@ -55,5 +56,5 @@ class TestHeuristic(TestCase):
         # plays
         expected /= 9
 
-        result = evaluate(self.board)
+        result = evaluate(self.game)
         self.assertEqual(expected, result)
