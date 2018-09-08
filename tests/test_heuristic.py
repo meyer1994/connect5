@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from ai.board import Board
 from ai.gamestate import GameState
-from ai.heuristic import evaluate, evaluate_line
+from ai import heuristic as heur
 
 class TestHeuristic(TestCase):
     def setUp(self):
@@ -17,6 +17,7 @@ class TestHeuristic(TestCase):
         board.set(3, 4, 'X')
         board.set(4, 4, 'O')
         self.game = GameState(board, False)
+        heur.MEMOIZE = {}
         # - - - X O
         # - - - - -
         # X X X X X
@@ -25,10 +26,10 @@ class TestHeuristic(TestCase):
 
     def test_evaluate_line(self):
         expected = [ 3, -3, 3**14, 0, 0 ]
-        result = [ evaluate_line(l) for l in self.game.board.rows ]
+        result = [ heur.evaluate_line(l) for l in self.game.board.rows ]
         self.assertListEqual(expected, result)
 
-    def test_evaluate(self):
+    def test_utility(self):
         # rows
         expected = 3**14
         # cols
@@ -39,5 +40,17 @@ class TestHeuristic(TestCase):
         # plays
         expected /= 9
 
-        result = evaluate(self.game)
+        result = heur.utility(self.game)
+        result = heur.utility(self.game)
+        self.assertEqual(expected, result)
+
+    def test_heuristic(self):
+        # rows
+        expected = 3**14
+        # cols
+        expected += 3 + 3**2 + 3**2
+        # diagonals
+        expected += 3
+
+        result = heur.heuristic(self.game)
         self.assertEqual(expected, result)
