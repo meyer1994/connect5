@@ -1,24 +1,26 @@
 from ai.board import Board
-from ai.heuristic import evaluate, semi
+from ai.heuristic import utility, heuristic
 from ai.gamestate import GameState
 from ai.minimax import MiniMax
 
 import math
 
-board = Board(9, 9)
+board = Board(10, 10)
 board.board = ''.join([
-    '-O-------',
-    '--XO-----',
-    '--OXO----',
-    'XOOXXXO--',
-    '-OXXXO---',
-    '--OXXX---',
-    '--OOOX---',
-    '---------',
-    '---------',
+    '-O--------',
+    '--XO------',
+    '--OXO-----',
+    'XOOXXXO---',
+    '-OXXXO----',
+    '--OXXX----',
+    '--OOOX----',
+    '----------',
+    '----------',
+    '----------',
 ])
-board = Board(15, 15)
+# board = Board(15, 15)
 game = GameState(board, False)
+game.plays = 25
 # 8 - - - - - - - - -
 # 7 - - - - - - - - -
 # 6 - - O O O X - - -
@@ -30,7 +32,12 @@ game = GameState(board, False)
 # 0 - O - - - - - - -
 #   0 1 2 3 4 5 6 7 8
 
-minimax = MiniMax(evaluate, semi, 2)
+minimax = MiniMax(utility, heuristic, 3)
+
+# game = game.next(7, 7, 'X')
+# print(game)
+# x, y = map(int, input('play:').split())
+# game = game.next(x, y, 'O')
 
 print(game)
 while not game.over:
