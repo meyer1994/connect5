@@ -9,11 +9,11 @@ class MiniMax(object):
         self.MAX_DEPTH = max_depth
 
     def min_play(self, game, alpha, beta, depth):
-        if depth >= self.MAX_DEPTH:
-            return self.heuristic(game)
-
         if game.over:
             return self.utility(game)
+
+        if depth >= self.MAX_DEPTH or game.plays < 6:
+            return self.heuristic(game)
 
         games = ( game.next(x, y, 'O') for x, y in game.moves )
         scores = ( self.max_play(g, alpha, beta, depth + 1) for g in games )
@@ -28,11 +28,11 @@ class MiniMax(object):
         return value
 
     def max_play(self, game, alpha, beta, depth):
-        if depth >= self.MAX_DEPTH:
-            return self.heuristic(game)
-
         if game.over:
             return self.utility(game)
+
+        if depth >= self.MAX_DEPTH or game.plays < 6:
+            return self.heuristic(game)
 
         games = ( game.next(x, y, 'X') for x, y in game.moves )
         scores = ( self.min_play(g, alpha, beta, depth + 1) for g in games )
