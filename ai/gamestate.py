@@ -1,4 +1,8 @@
+import math
+
 from copy import deepcopy
+
+from ai.board import Board
 
 class GameState(object):
     def __init__(self, board, over):
@@ -6,6 +10,7 @@ class GameState(object):
         self.board = board
         self.over = over
         self.plays = len(self.board) - self.board.board.count('-')
+        self.last = (-1, -1)
 
     def next(self, x, y, val):
         '''
@@ -16,6 +21,8 @@ class GameState(object):
             self.plays += 1
         if place != '-' and val == '-':
             self.plays -= 1
+
+        self.last = (x, y)
 
         copy = deepcopy(self)
         copy.board.set(x, y, val)
@@ -85,11 +92,79 @@ class GameState(object):
         Every space of the board that is not 1 or -1 is considered a possible
         move.
         '''
-        for i, v in enumerate(self.board):
-            if v == '-':
-                x = i % self.board.width
-                y = i // self.board.width
+        for x, y in self._iter():
+            if self.board.get(x, y) == '-':
                 yield (x, y)
+
+    def _iter(self):
+        order = int(math.sqrt(len(self.board)))
+
+        cycles = order // 2
+
+        if order % 2 == 1:
+            yield (cycles, cycles)
+            calc_n = lambda i: i * 2 + 2
+            calc_c = lambda i : cycles + 1 + i
+        else:
+            calc_c = lambda i : cycles + i
+            calc_n = lambda i: i * 2 + 1
+
+        for i in range(cycles):
+            x = calc_c(i)
+            y = calc_c(i)
+
+            n = calc_n(i)
+
+            # left
+            for _ in range(n):
+                yield (x, y)
+                x -= 1
+
+            # down
+            for _ in range(n):
+                yield (x, y)
+                y -= 1
+
+            # right
+            for _ in range(n):
+                yield (x, y)
+                x += 1
+
+            # up
+            for _ in range(n):
+                yield (x, y)
+                y += 1
+
+    def _sub_board(self, x, y, m=7):
+        q = m // 2
+        # get max and min values
+        w = self.board.width
+        h = self.board.height
+        max_x = min(w, x + q + 1)
+        max_y = min(h, y + q + 1)
+        min_x = max(0, x - q - 1)
+        min_y = max(0, y - q - 1)
+
+        # threat borders of board
+        if min_x == 0:
+            max_x = m
+        if min_y == 0:
+            max_y = m
+
+        if max_x == w:
+            min_x = w - m
+        if max_y == h:
+            min_y = h - m
+
+        # get rows of sub board
+        rows = ( self.board.row(i) for i in range(min_y, max_y) )
+        # filter the right cols from the rows
+        sub_rows = ( row[min_x:max_x] for row in rows )
+
+        board = Board(max_x - min_x, max_y - min_y)
+        board.board =''.join(sub_rows)
+
+        return board
 
     def __str__(self):
         return str(self.board)

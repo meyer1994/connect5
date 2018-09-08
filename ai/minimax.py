@@ -1,54 +1,62 @@
 from math import inf as INFINITY
+from copy import deepcopy
 
-from ai.heuristic import evaluate
+class MiniMax(object):
+    def __init__(self, util, heur, max_depth=3):
+        super(MiniMax, self).__init__()
+        self.utility = util
+        self.heuristic = heur
+        self.MAX_DEPTH = max_depth
 
-MAX_DEPTH = 7
+    def min_play(self, game, alpha, beta, depth):
+        if depth >= self.MAX_DEPTH:
+            return self.heuristic(game)
 
-def min_play(game, alpha, beta, depth):
-    global MAX_DEPTH
-    if depth >= MAX_DEPTH or game.over:
-        return evaluate(game.board)
+        if game.over:
+            return self.utility(game)
 
-    games = ( game.next(x, y, -1) for x, y in game.moves )
-    scores = ( max_play(g, alpha, beta, depth + 1) for g in games )
+        games = ( game.next(x, y, 'O') for x, y in game.moves )
+        scores = ( self.max_play(g, alpha, beta, depth + 1) for g in games )
 
-    value = INFINITY
+        value = INFINITY
 
-    for score in scores:
-        value = min(value, score)
-        if value <= alpha:
-            return value
-        beta = min(beta, value)
-    return value
+        for score in scores:
+            value = min(value, score)
+            if value <= alpha:
+                return value
+            beta = min(beta, value)
+        return value
 
-def max_play(game, alpha, beta, depth):
-    global MAX_DEPTH
-    if depth >= MAX_DEPTH or game.over:
-        return evaluate(game.board)
+    def max_play(self, game, alpha, beta, depth):
+        if depth >= self.MAX_DEPTH:
+            return self.heuristic(game)
 
-    games = ( game.next(x, y, 1) for x, y in game.moves )
-    scores = ( min_play(g, alpha, beta, depth + 1) for g in games )
+        if game.over:
+            return self.utility(game)
 
-    value = -INFINITY
+        games = ( game.next(x, y, 'X') for x, y in game.moves )
+        scores = ( self.min_play(g, alpha, beta, depth + 1) for g in games )
 
-    for score in scores:
-        value = max(value, score)
-        if value >= beta:
-            return value
-        alpha = max(alpha, value)
-    return value
+        value = -INFINITY
 
+        for score in scores:
+            value = max(value, score)
+            if value >= beta:
+                return value
+            alpha = max(alpha, value)
+        return value
 
-def minimax(game):
-    best_move = None
-    best_score = -INFINITY
+    def search(self, game):
+        best_move = None
+        best_score = -INFINITY
 
-    for x, y in game.moves:
-        print(x, y)
-        copy = game.next(x, y, 1)
-        score = min_play(copy, best_score, INFINITY, 0)
-        if score > best_score:
-            best_move = (x, y)
-            best_score = score
-    return best_move
+        for x, y in game.moves:
+            copy = game.next(x, y, 'X')
+            print(x, y)
+            score = self.min_play(copy, best_score, INFINITY, 0)
+            print(score)
+            if score > best_score:
+                best_move = (x, y)
+                best_score = score
+        return best_move
 
