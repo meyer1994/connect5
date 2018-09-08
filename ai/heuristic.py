@@ -1,3 +1,5 @@
+import functools
+
 from itertools import product, chain
 from collections import defaultdict
 
@@ -17,30 +19,31 @@ VALUE_TABLE.update(ONLY_O)
 VALUE_TABLE['-----'] = 0
 
 
+MEMOIZE = {}
+
+
+def memoize(func):
+    @functools.wraps(func)
+    def wrap(game):
+        global MEMOIZE
+
+        if game.board.board in MEMOIZE:
+            return MEMOIZE[game.board.board]
+        val = func(game)
+        MEMOIZE[game.board.board] = val
+        return val
+    return wrap
+
+
 def evaluate_line(line):
     return VALUE_TABLE[line]
 
 
-def semi(game):
-    x, y = game.last
-    game.board = game._sub_board(x, y, 5)
-    return evaluate(game)
-
-def evaluate(game):
-    '''
-    Calculates heuristic value.
-
-    Iterates over the rows, cols, and diagonals. In the respective order.
-
-    Returns:
-        The heuristic value.
-    '''
+def evaluate_lines(board):
     result = 0
-    plays = game.plays
-
     # adapted from:
     #   https://stackoverflow.com/a/571928/5092038
-    iterators = [ game.board.rows, game.board.cols, game.board.diags ]
+    iterators = [ board.rows, board.cols, board.diags ]
     combined = chain(*iterators)
     filtered = filter(lambda i: len(i) >= 5, combined)
     for line in filtered:
@@ -49,5 +52,26 @@ def evaluate(game):
         for i in range(l):
             sub_line = line[i:i+5]
             result += evaluate_line(sub_line)
+    return result
 
-    return result / plays
+
+@memoize
+def heuristic(game):
+    x, y = game.last
+    board = game.sub_board(x, y, 5)
+    return evaluate_lines(board)
+
+
+@memoize
+def utility(game):
+    '''
+    Calculates heuristic value.
+
+    Iterates over the rows, cols, and diagonals. In the respective order.
+
+    Returns:
+        The heuristic value.
+    '''
+    result = evaluate_lines(game.board)
+    return result / game.plays
+
