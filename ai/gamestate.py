@@ -16,17 +16,19 @@ class GameState(object):
         '''
         Creates a copy of the state, apply the play to this copy and returns it.
         '''
-        place = self.board.get(x, y)
-        if place == '-' and val != '-':
-            self.plays += 1
-        if place != '-' and val == '-':
-            self.plays -= 1
-
-        self.last = (x, y)
 
         copy = deepcopy(self)
+
+        place = copy.board.get(x, y)
+        if place == '-' and val != '-':
+            copy.plays += 1
+        if place != '-' and val == '-':
+            copy.plays -= 1
+
         copy.board.set(x, y, val)
-        copy.over = copy._is_over(x, y)
+        copy.last = (x, y)
+        copy.over = copy.over or copy._is_over(x, y)
+
         return copy
 
     def _is_over(self, x, y):
@@ -135,7 +137,7 @@ class GameState(object):
                 yield (x, y)
                 y += 1
 
-    def _sub_board(self, x, y, m=7):
+    def sub_board(self, x, y, m=7):
         q = m // 2
         # get max and min values
         w = self.board.width
