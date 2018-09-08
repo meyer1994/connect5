@@ -1,6 +1,8 @@
 from itertools import product, chain
 from collections import defaultdict
 
+from ai.board import Board
+
 ONLY_X = { ''.join(k): 3**k.count('X') for k in product('X-', repeat=5) }
 ONLY_X['XXXXX'] = 3**14
 del ONLY_X['-----']
@@ -18,6 +20,11 @@ VALUE_TABLE['-----'] = 0
 def evaluate_line(line):
     return VALUE_TABLE[line]
 
+
+def semi(game):
+    x, y = game.last
+    game.board = game._sub_board(x, y, 5)
+    return evaluate(game)
 
 def evaluate(game):
     '''
