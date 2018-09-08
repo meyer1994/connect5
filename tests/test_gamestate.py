@@ -32,6 +32,8 @@ class TestGameState(TestCase):
 
     def test_next(self):
         result = self.game.next(0, 0, 'O')
+        self.game.last = (0, 0)
+        self.game.plays += 1
         self.game.board.set(0, 0, 'O')
         self.assertEqual(result, self.game)
 
@@ -96,7 +98,7 @@ class TestGameState(TestCase):
         board = Board(4, 4)
         game = GameState(board, False)
         for x, y in game.moves:
-            game = game.next(x, y, 'x')
+            game = game.next(x, y, 'X')
         self.assertTrue(game.over)
         self.assertEqual(game.plays, 16)
 
@@ -132,14 +134,18 @@ class TestGameState(TestCase):
     def test_sub_board(self):
         expected = Board(7, 7)
         expected.board = ''.join([
-            '-------',
             'OOOX---',
             'OXXX---',
             'XXXO---',
             'OXXXO--',
             'OXO----',
-            'XO-----'
+            'XO-----',
+            '-------'
         ][::-1])
 
-        result = self.game._sub_board(6, 4)
+        result = self.game.sub_board(6, 4)
+        print()
+        print(expected)
+        print('='*10)
+        print(result)
         self.assertEqual(expected, result)
