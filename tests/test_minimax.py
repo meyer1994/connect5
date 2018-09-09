@@ -33,23 +33,9 @@ class TestMiniMax(TestCase):
         # 1 - - X O - - - - - -
         # 0 - O - - - - - - - -
         #   0 1 2 3 4 5 6 7 8 9
-        self.minimax = MiniMax(utility, heuristic, 3)
-
-    def test_minimax(self):
-        # I 've made this way because the algorithm will alwasy return some
-        # value on the top right of the board.
-        # So i get a sub board and add values to the possible moves, because
-        # i am lazy...
-        # return
-        board = self.game.sub_board(8, 8, 4)
-        game = GameState(board, False)
-        expected = { (x + 5, y + 5) for x, y in game.moves }
-        result = self.minimax.search(self.game)
-        self.assertIn(result, expected)
-
-    def test_min_depth(self):
         self.minimax = MiniMax(utility, heuristic, 2)
 
+    def test_minimax(self):
         expected = (6, 2)
         result = self.minimax.search(self.game)
         self.assertEqual(result, expected)
