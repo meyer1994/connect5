@@ -51,6 +51,6 @@ class TestHeuristic(TestCase):
         expected += 3 + 3**2 + 3**2
         # diagonals
         expected += 3
-
+        heur.SUB_BOARD_SIZE = 5
         result = heur.heuristic(self.game)
         self.assertEqual(expected, result)
