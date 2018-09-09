@@ -32,7 +32,7 @@ game.plays = 25
 # 0 - O - - - - - - -
 #   0 1 2 3 4 5 6 7 8
 
-minimax = MiniMax(utility, heuristic, 3)
+minimax = MiniMax(utility, heuristic, 2)
 
 # game = game.next(7, 7, 'X')
 # print(game)
