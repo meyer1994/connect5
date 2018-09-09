@@ -128,3 +128,6 @@ class Board(object):
 
     def __getitem__(self, i):
         return self.board.__getitem__(i)
+
+    def __hash__(self):
+        return hash(self.board)

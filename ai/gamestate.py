@@ -176,3 +176,6 @@ class GameState(object):
         over = self.over == g.over
         plays = self.plays == g.plays
         return board and over and plays
+
+    def __hash__(self):
+        return hash(self.board.board)

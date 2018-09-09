@@ -3,7 +3,6 @@ import functools
 from itertools import product, chain
 from collections import defaultdict
 
-from ai.board import Board
 
 ONLY_X = { ''.join(k): 3**k.count('X') for k in product('X-', repeat=5) }
 ONLY_X['XXXXX'] = 3**14
@@ -19,26 +18,14 @@ VALUE_TABLE.update(ONLY_O)
 VALUE_TABLE['-----'] = 0
 
 
-MEMOIZE = {}
-
-
-def memoize(func):
-    @functools.wraps(func)
-    def wrap(game):
-        global MEMOIZE
-
-        if game.board.board in MEMOIZE:
-            return MEMOIZE[game.board.board]
-        val = func(game)
-        MEMOIZE[game.board.board] = val
-        return val
-    return wrap
+SUB_BOARD_SIZE = 7
 
 
 def evaluate_line(line):
     return VALUE_TABLE[line]
 
 
+@functools.lru_cache(maxsize=None)
 def evaluate_lines(board):
     result = 0
     # adapted from:
@@ -55,14 +42,12 @@ def evaluate_lines(board):
     return result
 
 
-@memoize
 def heuristic(game):
     x, y = game.last
-    board = game.sub_board(x, y, 5)
+    board = game.sub_board(x, y, SUB_BOARD_SIZE)
     return evaluate_lines(board)
 
 
-@memoize
 def utility(game):
     '''
     Calculates heuristic value.

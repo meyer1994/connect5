@@ -149,3 +149,8 @@ class TestGameState(TestCase):
         print('='*10)
         print(result)
         self.assertEqual(expected, result)
+
+    def test_hash(self):
+        hash(self.game)
+        d = {self.game: '' }
+        s = { self.game }
