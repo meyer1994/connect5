@@ -13,7 +13,7 @@ AI assignment for INE5430
 
 ### Run
 
-    # Todo
+    python main.py
 
 ### Test
 
