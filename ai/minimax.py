@@ -1,6 +1,7 @@
 from math import inf as INFINITY
 from copy import deepcopy
 
+
 class MiniMax(object):
     def __init__(self, util, heur, max_depth=3):
         super(MiniMax, self).__init__()
@@ -12,7 +13,7 @@ class MiniMax(object):
         if game.over:
             return self.utility(game)
 
-        if depth >= self.MAX_DEPTH or game.plays < 6:
+        if depth >= self.MAX_DEPTH:
             return self.heuristic(game)
 
         games = ( game.next(x, y, 'O') for x, y in game.moves )
@@ -31,7 +32,7 @@ class MiniMax(object):
         if game.over:
             return self.utility(game)
 
-        if depth >= self.MAX_DEPTH or game.plays < 6:
+        if depth >= self.MAX_DEPTH:
             return self.heuristic(game)
 
         games = ( game.next(x, y, 'X') for x, y in game.moves )
@@ -49,12 +50,13 @@ class MiniMax(object):
     def search(self, game):
         best_move = None
         best_score = -INFINITY
+        beta = INFINITY
 
         for x, y in game.moves:
             copy = game.next(x, y, 'X')
-            print(x, y)
-            score = self.min_play(copy, best_score, INFINITY, 0)
-            print(score)
+            # print(x, y)
+            score = self.min_play(copy, best_score, beta, 0)
+            # print(score)
             if score > best_score:
                 best_move = (x, y)
                 best_score = score
