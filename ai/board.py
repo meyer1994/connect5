@@ -1,7 +1,25 @@
-from copy import deepcopy
+
 
 class Board(object):
+    '''
+    Holds the representation of the game board.
+
+    The board consists of one single string.
+
+    Attributes:
+        board: string representing the board.
+        width: width of the board.
+        height: height of the board.
+    '''
+
     def __init__(self, width, height):
+        '''
+        Constructor.
+
+        Attributes:
+            width: width of the board.
+            height: height of the board.
+        '''
         super(Board, self).__init__()
         self.board = '-' * (width * height)
         self.width = width
@@ -9,7 +27,7 @@ class Board(object):
 
     def row(self, i):
         '''
-        Gets ith row from of board.
+        Returns the ith row of the board.
         '''
         start = i * self.width
         end = start + self.width
@@ -18,14 +36,14 @@ class Board(object):
     @property
     def rows(self):
         '''
-        Iterator for all the rows in the board.
+        Generator for all rows of board.
         '''
         for i in range(self.height):
             yield self.row(i)
 
     def col(self, i):
         '''
-        Gets col of board.
+        Returns the ith column of the board.
         '''
         start = i
         end = (self.width * self.height)
@@ -35,7 +53,7 @@ class Board(object):
     @property
     def cols(self):
         '''
-        Iterator for all the cols in the board.
+        Generator for all columns of board.
         '''
         for i in range(self.width):
             yield self.col(i)
@@ -77,7 +95,7 @@ class Board(object):
     @property
     def diags(self):
         '''
-        Simple iterator for all the diagonals.
+        Generator for all the diagonals.
 
         It starts with the right diagonals first and goes to the left ones.
         '''
@@ -92,13 +110,13 @@ class Board(object):
         Gets the play at the coordinate.
 
         Returns:
-            1 for a player, -1 for the other, 0 for nothing.
+            X for a player, O for the other player, - for nothing.
         '''
         return self.board[y * self.width + x]
 
     def set(self, x, y, val):
         '''
-        Set the val in the coordinate.
+        Set the value in the coordinate.
         '''
         s = y * self.width + x
         self.board = self.board[:s] + val.upper() + self.board[s + 1:]
@@ -126,8 +144,8 @@ class Board(object):
     def __eq__(self, b):
         return self.board == b.board
 
-    def __getitem__(self, i):
-        return self.board.__getitem__(i)
-
     def __hash__(self):
+        '''
+        Used in memoization.
+        '''
         return hash(self.board)
