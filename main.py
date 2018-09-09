@@ -3,24 +3,36 @@ from ai.heuristic import utility, heuristic
 from ai.gamestate import GameState
 from ai.minimax import MiniMax
 
-import math
 
-board = Board(10, 10)
-board.board = ''.join([
-    '-O--------',
-    '--XO------',
-    '--OXO-----',
-    'XOOXXXO---',
-    '-OXXXO----',
-    '--OXXX----',
-    '--OOOX----',
-    '----------',
-    '----------',
-    '----------',
-])
-# board = Board(15, 15)
+def user_input():
+    move = input('Your move (x, y) separated by spaces:')
+    try:
+        x, y = map(int, move.split())
+        return (x, y)
+    except Exception:
+        print('Try again')
+        return user_input()
+
+
+# Empty board
+board = Board(15, 15)
 game = GameState(board, False)
-game.plays = 25
+minimax = MiniMax(utility, heuristic, 2)
+
+# Sample board used for tests
+# board = Board(10, 10)
+# board.board = ''.join([
+#     '-O--------',
+#     '--XO------',
+#     '--OXO-----',
+#     'XOOXXXO---',
+#     '-OXXXO----',
+#     '--OXXX----',
+#     '--OOOX----',
+#     '----------',
+#     '----------',
+#     '----------',
+# ])
 # 8 - - - - - - - - -
 # 7 - - - - - - - - -
 # 6 - - O O O X - - -
@@ -32,19 +44,21 @@ game.plays = 25
 # 0 - O - - - - - - -
 #   0 1 2 3 4 5 6 7 8
 
-minimax = MiniMax(utility, heuristic, 2)
 
-# game = game.next(7, 7, 'X')
-# print(game)
-# x, y = map(int, input('play:').split())
-# game = game.next(x, y, 'O')
-
-print(game)
 while not game.over:
+    print('Computer thinking...')
     x, y = minimax.search(game)
-    print(x, y)
     game = game.next(x, y, 'X')
     print(game)
-    x, y = map(int, input('play:').split())
+    print(f'Computer played ({x}, {y})')
+
+    if game.over:
+        print('Game is over')
+        break
+
+    print()
+
+    x, y = user_input()
     game = game.next(x, y, 'O')
     print(game)
+
