@@ -1,11 +1,28 @@
 import math
-
 from copy import deepcopy
 
 from ai.board import Board
 
+
 class GameState(object):
+    '''
+    Holds the game state.
+
+    Attributes:
+        board: game board.
+        over: boolean that says if the game is over or not.
+        plays: counter of played moves.
+        last: last move played.
+    '''
+
     def __init__(self, board, over):
+        '''
+        Constructor.
+
+        Args:
+            board: board of this state.
+            over: boolean with the state of the board.
+        '''
         super(GameState, self).__init__()
         self.board = board
         self.over = over
@@ -15,10 +32,15 @@ class GameState(object):
     def next(self, x, y, val):
         '''
         Creates a copy of the state, apply the play to this copy and returns it.
-        '''
 
+        Args:
+            x: x coordinate.
+            y: y coordinate.
+            val: value to place at the coordinate.
+        '''
         copy = deepcopy(self)
 
+        # Checks for possible erases of plays
         place = copy.board.get(x, y)
         if place == '-' and val != '-':
             copy.plays += 1
@@ -28,7 +50,6 @@ class GameState(object):
         copy.board.set(x, y, val)
         copy.last = (x, y)
         copy.over = copy.over or copy._is_over(x, y)
-
         return copy
 
     def _is_over(self, x, y):
@@ -40,27 +61,30 @@ class GameState(object):
         Returns:
             True if the piece finished the game. False otherwise.
         '''
-        # this values are checked for the board borders
+        # Be careful to not overstep the board borders
         max_x = min(x + 5, self.board.width)
         min_x = max(x - 5, 0)
         max_y = min(y + 5, self.board.height)
         min_y = max(y - 5, 0)
 
+        # No moves left
         if self.plays == len(self.board):
             return True
 
+        # Row
         row = self.board.row(y)[min_x:max_x]
         if self._is_winner(row):
             return True
 
+        # Col
         col = self.board.col(x)[min_y:max_y]
         if self._is_winner(col):
             return True
 
+        # Diagonals
         ldiag = self.board.ldiag(x + y)
         if len(ldiag) >= 5 and self._is_winner(ldiag):
             return True
-
         rdiag = self.board.rdiag(x + self.board.height - 1 - y)
         if len(rdiag) >= 5 and self._is_winner(rdiag):
             return True
@@ -71,10 +95,12 @@ class GameState(object):
         '''
         Checks if line is the winning one.
 
-        A line is a winning one if the sum of all its values equals to 5 or -5.
+        A line is a winning one if it is 'XXXXX' or 'OOOOO'. Note that this
+        method accepts longer lines and divides them into sections of 5 pieces
+        each.
 
         Args:
-            List representing the line.
+            line: line to check.
 
         Returns:
             True if the line has the winning line. False otherwise.
@@ -91,16 +117,35 @@ class GameState(object):
         '''
         Returns an iterator of possible moves.
 
-        Every space of the board that is not 1 or -1 is considered a possible
+        Every space of the board that is not X or O is considered a possible
         move.
+
+        Returns:
+            Generator for the possible moves from the current game state.
         '''
         for x, y in self._iter():
             if self.board.get(x, y) == '-':
                 yield (x, y)
 
-    def _iter(self):
-        order = int(math.sqrt(len(self.board)))
+    @property
+    def children(self):
+        '''
+        Syntatic sugar for the minimax class.
+        '''
+        for m in self.moves:
+            yield m
 
+    def _iter(self):
+        '''
+        Iterator created to generate children.
+
+        This iterators iterate over the matrix and returns its values from the
+        inside out. It ONLY works with square matrices.
+
+        Returns:
+            Generator for the coordinates of the matrix.
+        '''
+        order = int(math.sqrt(len(self.board)))
         cycles = order // 2
 
         if order % 2 == 1:
@@ -138,6 +183,20 @@ class GameState(object):
                 y += 1
 
     def sub_board(self, x, y, m=7):
+        '''
+        Returns a part of a board of size m by m.
+
+        If the coordinates are on the border of the board, it will return the
+        size m located more to the inner part of the board.
+
+        Args:
+            x: x coordinate.
+            y: y coordinate.
+            m: size of the partial board.
+
+        Returns:
+            Partial board around the coordinate x and y with size m by m.
+        '''
         q = m // 2
         # get max and min values
         w = self.board.width
@@ -178,4 +237,7 @@ class GameState(object):
         return board and over and plays
 
     def __hash__(self):
-        return hash(self.board.board)
+        '''
+        Used in the memoization.
+        '''
+        return hash(self.board)
