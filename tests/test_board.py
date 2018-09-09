@@ -144,7 +144,3 @@ class TestBoard(TestCase):
         b1.set(0, 0, 'x')
         self.assertNotEqual(b1, b2)
 
-    def test_getitem(self):
-        expected = '----X'
-        result = self.board[0:5]
-        self.assertEqual(expected, result)
